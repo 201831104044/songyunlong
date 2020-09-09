@@ -1,0 +1,88 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.util.Arrays;
+import javax.swing.filechooser.FileSystemView;
+
+public class first1 {
+	// 以行为单位读取文件，常用于读面向行的格式化文件
+	public static void readFileByLines(String fileName) {
+	   File file = new File(fileName);
+	   BufferedReader reader = null;
+	   try {
+	      // System.out.println("以行为单位读取文件内容，一次读一整行：");
+	       reader = new BufferedReader(new FileReader(file));
+	       String tempString = null; //tempString 一行字符串
+	       int line = 1;
+	       // 一次读入一行，直到读入null为文件结束
+	       String province[] = new String[1000]; 
+	       String town[] = new String[1000];
+	       String num[] = new String[1000];
+	       int a=0;	       
+	       while ((tempString = reader.readLine()) != null) {
+				// 显示行号
+	    	   //用spilt函数去分割字符串 空格一分	
+	           System.out.println("line " + line + ": " + tempString);//验证步骤***
+	           line++;
+	           String[] s1 = tempString.split("\\s");  //分割一行的数据
+	           for(int i=0;i<s1.length;i++) {
+	        	  // System.out.println(s1[i]);   //验证步骤***
+	        	   province[a] = s1[0]; //province数组存1-最后的省份
+	        	   town[a] = s1[1]; //存城市
+	        	   num[a] = s1[2]; //存人数
+	           }
+	           a++;	        		   
+	       }     
+	       reader.close();
+	       //当所有数据都录入并分割之后 下面开始归类统计
+	       //并且准备存储文件
+	       FileOutputStream fp = new FileOutputStream(new File("D:\\out.txt"));//将文件存储到D:\\out.txt
+	        PrintStream fpp = new PrintStream(fp);
+	       int i,j,count=0;
+	       //两层循环 
+	       for(int k=0;k<province.length;k++) {
+	    	   for(i=count+1;;i++) {
+	    		   //分类 区别不同省 
+	    		   if(!province[i].equals(province[i+1])){  
+	    			   System.out.println(province[i]);	 //打印验证
+	    			   fpp.println(province[i]);   // 存储到文件里
+	    			   break;
+	    		   }
+	    	   }	
+	    	   //根据不同省 输出同省的城市和人数
+	    	   for(j=count+1;j<=i;j++) {	
+	    		   if(num[j].equals("0")) {   //将为0的地区删除
+	    			   break;
+	    		   }
+	    		   else 
+	    		   {
+	    		   System.out.println(town[j]+" "+num[j]);	 //打印验证
+	    		   fpp.println(town[j]+" "+num[j]);   //存储到文件
+	    		   }
+	    	   }
+	    	   count = i; //count 记录进行到哪条数据
+	    	   System.out.println("\t");
+	    	   fpp.println("\t");
+	       } 
+	      
+	   } catch (IOException e) {
+	       e.printStackTrace();
+	   } finally {
+	       if (reader != null) {
+	           try {
+	               reader.close();
+	           } catch (IOException e1) {
+	           }
+	       }
+	   }
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		readFileByLines("C:\\Users\\16563\\Desktop\\软件工程\\yq_in.txt");	
+	}
+}
